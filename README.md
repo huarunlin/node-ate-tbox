@@ -40,56 +40,61 @@ flags: dut power supply switch flags.<br>
 limit_max: max current(mA), when the current is greater than that value, the power is off.<br>
 limit_min: min current(mA), when the current is less than that value, the power is off.<br>
 
-## Method: StartSingleTest(interval, updateCB, exitCB)
+## Method: StartSingleTest(interval, eventCB)
 
 This function is used to start single test.<br>
 interval: drawer refresh interval(s).<br>
-updateCB: drawer update callback.<br>
-exitCB: test exit callback.<br>
+eventCB: event callback.<br>
 
-## Method: StartMultiTest(interval, duration, flags, updateCB, exitCB)
+## Method: StartMultiTest(interval, duration, flags, eventCB)
 
 This function is used to start multi drawer test.<br>
 interval: drawer refresh interval(s).<br>
 duration: duration test time(s).<br>
 flags: drawer refresh list flags.<br>
-updateCB: drawer update callback.<br>
-exitCB: test exit callback.<br>
+eventCB: event callback.<br>
 
 ## Method: StopMultiTest()
 
 This function is used to stop multi drawer test.<br>
+
+## CallBack: eventCB
+
+Function to call when the dut information is updated or the test exits.
 
 # Usage Example
 
 ```javascript
 const AteApi = require('..');
 
-function updateHandle(infos) {
-    for(var i = 0; i < infos.duts.length; i++){
-        console.log("<%d-%d>: sw[%d] avg[%d] min[%d] max[%d]", 
-            infos.index,
-            i, 
-            infos.duts[i].sw,
-            infos.duts[i].avg,
-            infos.duts[i].min,
-            infos.duts[i].max);
-    }   
-}
-
-function testDone(infos) {
-    console.log("test done");   
-    /* 关闭设备 */
-    if (0 != AteApi.CloseDevice()) {
-        console.log("device close failure.");
+function eventHandle(event) {
+    if ("update" == event.event) {
+        /* 更新dut信息 */
+        for(var i = 0; i < event.duts.length; i++){
+            console.log("<%d-%d>: sw[%d] avg[%d] min[%d] max[%d]", 
+                event.index,
+                i, 
+                event.duts[i].sw,
+                event.duts[i].avg,
+                event.duts[i].min,
+                event.duts[i].max);
+        } 
+    } else if ("exit" == event.event) {
+        console.log("test done");   
+        /* 关闭设备 */
+        if (0 != AteApi.CloseDevice()) {
+            console.log("device close failure.");
+        } else {
+            console.log("device close success.");   
+        }
+    } else {
+        console.log("undefinition event %s.", event.event);  
     }
-    console.log("device close success."); 
-    //process.exit();
 }
 
 function singleTest() {
     var interval = 2;
-    if (0 != AteApi.StartSingleTest(interval, updateHandle, testDone)) {
+    if (0 != AteApi.StartSingleTest(interval, eventHandle)) {
         console.log("Start Single Test failure."); 
         AteApi.CloseDevice();
         process.exit();
@@ -100,7 +105,7 @@ function multiTest() {
     var interval = 2;
     var duration = 30;
     var flags = 0x5;
-    if (0 != AteApi.StartMultiTest(interval, duration, flags, updateHandle, testDone)) {
+    if (0 != AteApi.StartMultiTest(interval, duration, flags, eventHandle)) {
         console.log("Start Single Test failure."); 
         AteApi.CloseDevice();
         process.exit();
@@ -129,9 +134,7 @@ function doTest() {
          AteApi.CloseDevice();
          process.exit();
     } 
-    singleTest();
-    //multiTest();
+    //singleTest();
+    multiTest();
 }
-
-doTest();
 ```

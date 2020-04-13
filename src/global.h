@@ -15,11 +15,18 @@ typedef struct {
     uint32_t    duration;
     uint32_t    flags;
     std::thread thread;
-    struct {
-        napi_threadsafe_function update;
-        napi_threadsafe_function done;
-    } cb;
+    napi_threadsafe_function cb;
 } TestRteType;
+
+enum CallBackType { 
+    CALLBACK_TYPE_UPDATE = 0,
+    CALLBACK_TYPE_EXIT
+};
+
+typedef struct {
+    CallBackType type;
+    void        *param;
+} CallBackContent;
 
 typedef struct {
     uint32_t   id;
@@ -38,8 +45,7 @@ napi_value StartSingleTest(napi_env env, napi_callback_info info);
 napi_value StartMultiTest(napi_env env, napi_callback_info info);
 napi_value StopMultiTest(napi_env env, napi_callback_info info);
 
-void CallJsUpdate(napi_env env, napi_value js_cb, void* context, void* data);
-void CallJsTestDone(napi_env env, napi_value js_cb, void* context, void* data);
+void CallJs(napi_env env, napi_value js_cb, void* context, void* data);
 
 void SingleTestThread();
 void MultiTestThread();

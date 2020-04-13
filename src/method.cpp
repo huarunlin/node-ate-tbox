@@ -115,8 +115,8 @@ napi_value StartSingleTest(napi_env env, napi_callback_info info)
     int32_t     errCode = -1;
     napi_value  ret;
     napi_status status;
-    size_t      argc = 3;
-    napi_value  args[3], updateWorkName, doneWorkName;
+    size_t      argc = 2;
+    napi_value  args[2], async_resource_name;
 
     if (_TestRte.running) {
         tr_err("<%s> test is running.\r\n", __FUNCTION__);
@@ -134,21 +134,11 @@ napi_value StartSingleTest(napi_env env, napi_callback_info info)
         tr_err("<%s> Invaild param interval.\r\n", __FUNCTION__);
         goto exit;
     }
-    napi_create_string_utf8(env, "ate test update", NAPI_AUTO_LENGTH, &updateWorkName);
-    status = napi_create_threadsafe_function(env, args[1], NULL, updateWorkName, 0, 1,
-                                             NULL, NULL, NULL, CallJsUpdate,
-                                             &_TestRte.cb.update);
+    napi_create_string_utf8(env, "ate test callback", NAPI_AUTO_LENGTH, &async_resource_name);
+    status = napi_create_threadsafe_function(env, args[1], NULL, async_resource_name, 0, 1,
+                                             NULL, NULL, NULL, CallJs, &_TestRte.cb);
      if (status != napi_ok) {
-        tr_err("<%s> napi_create_threadsafe_function update failure.\r\n", __FUNCTION__);
-        goto exit;
-    }
-
-    napi_create_string_utf8(env, "ate test done", NAPI_AUTO_LENGTH, &doneWorkName);
-    status = napi_create_threadsafe_function(env, args[2], NULL, doneWorkName, 0, 1,
-                                             NULL, NULL, NULL, CallJsTestDone,
-                                             &_TestRte.cb.done);
-     if (status != napi_ok) {
-        tr_err("<%s> napi_create_threadsafe_function done failure.\r\n", __FUNCTION__);
+        tr_err("<%s> napi_create_threadsafe_function failure.\r\n", __FUNCTION__);
         goto exit;
     }
 
@@ -165,8 +155,8 @@ napi_value StartMultiTest(napi_env env, napi_callback_info info)
     int32_t     errCode = -1;
     napi_value  ret;
     napi_status status;
-    size_t      argc = 5;
-    napi_value  args[5], updateWorkName, doneWorkName;
+    size_t      argc = 4;
+    napi_value  args[4], async_resource_name;
 
     if (_TestRte.running) {
         tr_err("<%s> test is running.\r\n", __FUNCTION__);
@@ -197,21 +187,11 @@ napi_value StartMultiTest(napi_env env, napi_callback_info info)
         goto exit;
     }
 
-    napi_create_string_utf8(env, "ate test update", NAPI_AUTO_LENGTH, &updateWorkName);
-    status = napi_create_threadsafe_function(env, args[3], NULL, updateWorkName, 0, 1,
-                                             NULL, NULL, NULL, CallJsUpdate,
-                                             &_TestRte.cb.update);
+    napi_create_string_utf8(env, "ate test callback", NAPI_AUTO_LENGTH, &async_resource_name);
+    status = napi_create_threadsafe_function(env, args[3], NULL, async_resource_name, 0, 1,
+                                             NULL, NULL, NULL, CallJs, &_TestRte.cb);
      if (status != napi_ok) {
-        tr_err("<%s> napi_create_threadsafe_function update failure.\r\n", __FUNCTION__);
-        goto exit;
-    }
-
-    napi_create_string_utf8(env, "ate test done", NAPI_AUTO_LENGTH, &doneWorkName);
-    status = napi_create_threadsafe_function(env, args[4], NULL, doneWorkName, 0, 1,
-                                             NULL, NULL, NULL, CallJsTestDone,
-                                             &_TestRte.cb.done);
-     if (status != napi_ok) {
-        tr_err("<%s> napi_create_threadsafe_function done failure.\r\n", __FUNCTION__);
+        tr_err("<%s> napi_create_threadsafe_function failure.\r\n", __FUNCTION__);
         goto exit;
     }
 
