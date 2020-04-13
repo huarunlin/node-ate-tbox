@@ -107,6 +107,11 @@ void MultiTestThread()
     start = time(NULL);
     while (_TestRte.running & !_TestRte.reqStop) {
         now = time(NULL);
+        /* Check Test Done */
+        if (difftime(time(NULL), start) > _TestRte.duration) {
+            break;
+        }
+        /* Check update */
         if (pre != 0 && difftime(now, pre) < _TestRte.interval) {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             continue;
@@ -138,10 +143,6 @@ void MultiTestThread()
                 delete content;
                 continue;
             } 
-        }
-
-        if (difftime(time(NULL), start) > _TestRte.duration) {
-            break;
         }
     }
 
