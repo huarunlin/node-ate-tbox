@@ -123,7 +123,7 @@ function doTest() {
     } 
     console.log("device open success."); 
     /* 选择通信抽屉 */
-    if (0 != AteApi.SelectDrawer(0)) {
+    if (0 != AteApi.SelectDrawer(1)) {
         console.log("Select Drawer failure."); 
         AteApi.CloseDevice();
         process.exit();
