@@ -130,13 +130,12 @@ void MultiTestThread()
             if (0x0 == mask) {
                 continue;
             }
-
             drawerInfo = &_DrawerInfo[i];
             drawerInfo->id = i;
             /* 选择通信抽屉 */
-            // if (false == _ATE.SelectDrawer(i + 1)) {
-            //     continue;
-            // }
+            if (false == _ATE.SelectDrawer(i + 1)) {
+                continue;
+            }
             /* 获取DUT信息 */
             if (false == _ATE.GetAllDutInfo(drawerInfo->dutInfos)) {
                 continue;
@@ -154,7 +153,6 @@ void MultiTestThread()
         }
     }
 
-exit:
     _TestRte.running = false;
     _TestRte.reqStop = false;
     content = new CallBackContent();
