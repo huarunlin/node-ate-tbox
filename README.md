@@ -80,7 +80,7 @@ function eventHandle(event) {
                 event.duts[i].max);
         } 
     } else if ("exit" == event.event) {
-        if (event.code == 1) {
+        if (event.code == 0) {
             console.log("test done");   
         } else {
             console.log("User Request Exit");  

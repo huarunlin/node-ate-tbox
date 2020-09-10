@@ -108,7 +108,7 @@ void MultiTestThread()
     CallBackContent *content;
 
     start = time(NULL);
-    while (_TestRte.running & !_TestRte.reqStop) {
+    while (_TestRte.running) {
         if (_TestRte.reqStop) {
             exitCode = 1;
             break;
