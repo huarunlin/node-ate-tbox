@@ -80,7 +80,11 @@ function eventHandle(event) {
                 event.duts[i].max);
         } 
     } else if ("exit" == event.event) {
-        console.log("test done");   
+        if (event.code == 1) {
+            console.log("test done");   
+        } else {
+            console.log("User Request Exit");  
+        }
         /* 关闭设备 */
         if (0 != AteApi.CloseDevice()) {
             console.log("device close failure.");

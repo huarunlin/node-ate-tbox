@@ -49,8 +49,11 @@ void CallJs(napi_env env, napi_value js_cb, void* context, void* data)
 
     } else if (CALLBACK_TYPE_EXIT == content->type) {
         /* Event */
+        napi_value code;
         napi_create_string_utf8(env, "exit", NAPI_AUTO_LENGTH, &event);
+        napi_create_uint32(env, (uint32_t)(content->param), &code);
         napi_set_named_property(env, argv, "event", event);
+        napi_set_named_property(env, argv, "code", code);
     }
     delete content;
     status = napi_call_function(env, undefined, js_cb, 1, &argv, NULL);
@@ -99,16 +102,21 @@ exit:
 void MultiTestThread() 
 {
     napi_status status;
-    uint32_t mask;
+    uint32_t mask, exitCode = 0;
     time_t  start = 0, pre = 0, now = 0, diff = 0;
     DrawerInfoType  *drawerInfo = NULL;
     CallBackContent *content;
 
     start = time(NULL);
     while (_TestRte.running & !_TestRte.reqStop) {
+        if (_TestRte.reqStop) {
+            exitCode = 1;
+            break;
+        }
         now = time(NULL);
         /* Check Test Done */
         if (difftime(time(NULL), start) > _TestRte.duration) {
+            exitCode = 0;
             break;
         }
         /* Check update */
@@ -151,7 +159,7 @@ exit:
     _TestRte.reqStop = false;
     content = new CallBackContent();
     content->type = CALLBACK_TYPE_EXIT;
-    content->param = NULL;
+    content->param = (void*)exitCode;
     status = napi_call_threadsafe_function(_TestRte.cb, content, napi_tsfn_blocking);
     if (status != napi_ok){
         tr_err("<%s> napi_call_function done failure.\r\n", __FUNCTION__);
