@@ -87,7 +87,7 @@ bool CATE::SelectDrawer(unsigned char index, unsigned long timeout) {
 	unsigned short did;
 
     /* 发送设置请求 */
-	ret = send(CANID_DRAWER_HOST, request, sizeof(request), timeout);
+	ret = send(CANID_FRAME_HOST, request, sizeof(request), timeout);
 	if (true != ret) {
         tr_err("<%s> Send request failure.\r\n", __FUNCTION__);
         return false;
