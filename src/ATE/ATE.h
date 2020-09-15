@@ -3,7 +3,7 @@
 
 #include "PassThruDevice.h"
 
-#define DEFAULT_TIMEOUT     500
+#define DEFAULT_TIMEOUT     1500
 #define DUT_COUNT           12
 
 typedef struct {
